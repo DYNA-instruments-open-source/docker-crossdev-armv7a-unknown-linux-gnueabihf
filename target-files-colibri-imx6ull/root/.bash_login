@@ -1,0 +1,5 @@
+#!/bin/bash
+export HOME=/root
+cd
+source /etc/profile
+export PS1="(chroot armv7a-hf) $PS1"

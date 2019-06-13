@@ -1,0 +1,15 @@
+app-emulation/qemu -vnc static-user static-libs QEMU_SOFTMMU_TARGETS: arm QEMU_USER_TARGETS: arm
+
+# required by dev-libs/glib
+# required by app-emulation/qemu[static-user]
+# required by qemu (argument)
+dev-libs/libpcre static-libs
+# required by app-emulation/qemu[xattr,static-user]
+# required by qemu (argument)
+sys-apps/attr static-libs
+# required by app-emulation/qemu[static-user]
+# required by qemu (argument)
+dev-libs/glib static-libs
+# required by app-emulation/qemu[static-user]
+# required by qemu (argument)
+sys-libs/zlib static-libs
