@@ -1,5 +1,4 @@
 #!/bin/bash
 
-ln -s -f -T /tmp /usr/${TARGET}/tmp
 echo 'alias emerge-chroot="ROOT=/ CBUILD=$(grep CHOST= /etc/portage/make.conf|cut -d= -f2) HOSTCC=$CBUILD-gcc emerge"' > /etc/bash/bashrc.d/emerge-chroot
 emerge-chroot --ask --update -v --keep-going @world
