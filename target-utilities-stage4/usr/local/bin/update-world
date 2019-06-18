@@ -1,0 +1,4 @@
+#!/bin/bash
+
+emerge -v1uDN sys-devel/binutils${BINUTILS_SLOT:+:$BINUTILS_SLOT} sys-libs/glibc${GLIBC_VERSION:+-$GLIBC_VERSION} sys-kernel/linux-headers${KERNELHEADERS_VERSION:+-$KERNELHEADERS_VERSION} sys-devel/gcc${GCC_SLOT:+:$GCC_SLOT}
+emerge -vuDN --keep-going @world

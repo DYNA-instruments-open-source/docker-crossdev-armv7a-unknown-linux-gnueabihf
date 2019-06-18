@@ -1,0 +1,4 @@
+unset QEMU_LD_PREFIX
+export HOME=/root
+cd $HOME
+export PS1="(chroot $TARGET) $PS1"

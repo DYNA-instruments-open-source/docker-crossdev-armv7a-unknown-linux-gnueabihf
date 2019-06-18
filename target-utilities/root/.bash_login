@@ -1,5 +1,0 @@
-#!/bin/bash
-export HOME=/root
-cd $HOME
-source /etc/profile
-export PS1="(chroot armv7a-unknown-linux-gnueabihf) $PS1"
