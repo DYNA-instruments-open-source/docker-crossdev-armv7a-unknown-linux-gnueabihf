@@ -2,3 +2,4 @@ build-docker-image.sh
 *~
 **/*~
 .git
+stage4b-cache
