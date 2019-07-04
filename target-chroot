@@ -1,23 +1,26 @@
 #!/bin/bash
 
-/etc/init.d/qemu-binfmt --quiet start
-
-#Next two lines are optional. Activate if the qemu-wrapper is used. Check that the wrapper location corresponds with the call at the end of line two
-#echo '-1' > /proc/sys/fs/binfmt_misc/arm #deregister wrong arm
-#echo ':arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-wrapper:' > /proc/sys/fs/binfmt_misc/register
+test -r /proc/sys/fs/binfmt_misc/status || mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc || { echo "Do you need to run the container --privileged ?"; exit -1; }
+grep -q enabled /proc/sys/fs/binfmt_misc/status || { echo "you need to enable binfmt_misc on your host, else ${TARGET:-target}-chroot will not work."; exit -1; }
+test -r /proc/sys/fs/binfmt_misc/qemu-arm || echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff:/usr/bin/qemu-arm:OC' > /proc/sys/fs/binfmt_misc/register || \
+  { echo "Could not register qemu-arm with binfmt_misc, do that on your host, please."; exit -1; }
 
 CHROOT_DIR=/usr/${TARGET:-armv7a-unknown-linux-gnueabihf}
-mount -t proc proc ${CHROOT_DIR}/proc || { echo "Do you need to run the container --privileged ?"; exit 1; }
-mount --rbind /sys ${CHROOT_DIR}/sys
-mount --make-rslave ${CHROOT_DIR}/sys
-mount --rbind /dev ${CHROOT_DIR}/dev
-mount --make-rslave ${CHROOT_DIR}/dev
-mkdir -p ${CHROOT_DIR}/usr/portage
-mount --rbind /usr/portage ${CHROOT_DIR}/usr/portage
-cp -L /etc/resolv.conf ${CHROOT_DIR}/etc/resolv.conf
+grep -q ${CHROOT_DIR}/proc /proc/mounts || { mount -t proc proc ${CHROOT_DIR}/proc || { echo "Do you need to run the container --privileged ?"; exit 1; } && DO_UMOUNT="${CHROOT_DIR}/proc $DO_UMOUNT"; }
+grep -q ${CHROOT_DIR}/sys /proc/mounts || { mount --rbind /sys ${CHROOT_DIR}/sys && mount --make-rslave ${CHROOT_DIR}/sys && DO_UMOUNT="${CHROOT_DIR}/sys $DO_UMOUNT"; }
+grep -q ${CHROOT_DIR}/dev /proc/mounts || { mount --rbind /dev ${CHROOT_DIR}/dev && mount --make-rslave ${CHROOT_DIR}/dev && DO_UMOUNT="${CHROOT_DIR}/dev $DO_UMOUNT"; }
+grep -q ${CHROOT_DIR}/usr/portage /proc/mounts || { mkdir -p ${CHROOT_DIR}/usr/portage && mount --rbind /usr/portage ${CHROOT_DIR}/usr/portage && DO_UMOUNT="${CHROOT_DIR}/usr/portage $DO_UMOUNT"; }
+rsync -Lc /etc/resolv.conf ${CHROOT_DIR}/etc/resolv.conf
 
 export QEMU_CPU=${QEMU_CPU:-cortex-a7}
 unset QEMU_LD_PREFIX
 chroot ${CHROOT_DIR}/ /bin/bash --login ${*:+-c} "${*:--i}"
- 
-umount -R ${CHROOT_DIR}/{dev,sys,proc,usr/portage}
+RESULT=$?
+
+#umount -R ${CHROOT_DIR}/{dev,sys,proc,usr/portage}
+#echo $DO_UMOUNT
+for fs in $DO_UMOUNT; do 
+  umount -R $fs
+done
+
+exit $RESULT

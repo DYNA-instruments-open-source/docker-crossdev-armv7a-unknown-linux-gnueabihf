@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# this switches binutils and gcc to the newest version, except the enviroment variables BINUTILS_SLOT and GCC_SLOT are preset
+
+BINUTILS_VERSION="$(portageq envvar CHOST)${BINUTILS_SLOT:+-$BINUTILS_SLOT}"
+GCC_VERSION="$(portageq envvar CHOST)${GCC_SLOT:+-$GCC_SLOT}"
+
+NEW_BINUTILS="$(binutils-config -l | grep $BINUTILS_VERSION | tail -n1 | awk '{print $2}')"
+NEW_GCC="$(gcc-config -l | grep $GCC_VERSION | tail -n1 | awk '{print $2}')"
+
+binutils-config ${NEW_BINUTILS:--c}
+gcc-config ${NEW_GCC:--c}

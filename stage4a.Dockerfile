@@ -1,6 +1,7 @@
 ARG STAGE3_TAG
-FROM dynainstrumentsoss/${STAGE3_TAG}
+FROM ${STAGE3_TAG}
 LABEL maintainer="linuxer (at) quantentunnel.de"
+ARG MERGE_JOBS
 
 # This is modeled after the following sources:
 #  * https://github.com/wuodan-docker/gentoo-crossdev-armv6j_hardfp
@@ -17,23 +18,23 @@ RUN ln -s -f -T ../../usr/portage/profiles/default/linux/arm/17.0/armv7a /usr/${
 	ln -s -f -T ../../../../usr/portage/profiles /usr/${TARGET}/usr/portage/profiles && \
 # add symlink to lib64, see https://wiki.gentoo.org/wiki/Cross_build_environment#Known_bugs_and_limitations
 	ln -s -f -T lib /usr/${TARGET}/usr/lib64 && \
-	ln -s -f -T /tmp /usr/${TARGET}/usr/${TARGET}/tmp
+	ln -s -f -T /tmp /usr/${TARGET}/usr/${TARGET}/tmp && \
+# delete some files, which prevent regular updates by portage/emerge \
+        rm -f /usr/$TARGET/sbin/unix_chkpwd \
+              /usr/$TARGET/bin/ping \
+              /usr/$TARGET/bin/arping \
+              /usr/$TARGET/usr/lib/misc/ssh-keysign
+
+# install a default kernel and some tools
+RUN USE="symlink" ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET}/ sys-kernel/gentoo-sources app-portage/gentoolkit
 
 # this will contain failures, gcc fails for sure
 # perl-cleaner -all will be run in stage4b in a privileged container
-RUN ${TARGET}-emerge --jobs=8 --load-average=12.9 --root=/usr/${TARGET} -uv --keep-going \
-	--exclude "app-crypt/pinentry sys-libs/pam dev-python/pyblake2 dev-python/pyxattr sys-apps/portage sys-apps/util-linux sys-devel/gcc dev-libs/gmp sys-apps/groff sys-devel/binutils dev-libs/libpcre" \
+RUN ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET} -uv --keep-going \
+	--exclude "app-crypt/pinentry dev-python/pyblake2 dev-python/pyxattr sys-apps/util-linux sys-apps/portage sys-devel/gcc dev-libs/gmp sys-apps/groff sys-devel/binutils dev-libs/libpcre" \
 	@world || true
 
-# install a default kernel
-RUN USE="symlink" ${TARGET}-emerge --jobs=8 --load-average=12.9 --root=/usr/${TARGET}/ sys-kernel/gentoo-sources app-portage/gentoolkit sys-devel/gdb
-
-# run the missing system update to the end
-# commented, will be run in an privileged container during the build script
-#RUNP /etc/init.d/qemu-binfmt --quiet start && \
-#	chroot /usr/${TARGET} /bin/bash --login -c locale-gen && \
-#	chroot /usr/${TARGET} /bin/bash --login -c "emerge -v1uDN sys-devel/binutils${BINUTILS_SLOT:+:$BINUTILS_SLOT} sys-libs/glibc${GLIBC_VERSION:+-$GLIBC_VERSION} sys-kernel/linux-headers${KERNELHEADERS_VERSION:+-$KERNELHEADERS_VERSION} sys-devel/gcc${GCC_SLOT:+:$GCC_SLOT}" && \
-#	chroot /usr/${TARGET} /bin/bash --login -c "emerge -vuDN --keep-going @world" && \
-#	chroot /usr/${TARGET} /bin/bash --login -c "perl-cleaner --all"
+RUN  chmod +x /usr/$TARGET/usr/local/bin/switch-toolchain; \
+     chmod -s /usr/$TARGET/bin/mount /usr/$TARGET/bin/umount
 
 CMD /bin/bash -il

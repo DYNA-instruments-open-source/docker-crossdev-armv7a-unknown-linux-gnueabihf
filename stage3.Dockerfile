@@ -1,5 +1,7 @@
-FROM dynainstrumentsoss/build-env-crossdev:gentoo
+ARG BASE_TAG=latest
+FROM dynainstrumentsoss/build-env-crossdev:${BASE_TAG}
 LABEL maintainer="linuxer (at) quantentunnel.de"
+ARG MERGE_JOBS
 
 # This is modeled after the following sources:
 #  * https://github.com/wuodan-docker/gentoo-crossdev-armv6j_hardfp
@@ -9,12 +11,12 @@ LABEL maintainer="linuxer (at) quantentunnel.de"
 # prepare portage, cross-compler, static QEMU, etc.
 COPY host-files-stage3/ /
 
-RUN QEMU_USER_TARGETS="arm" QEMU_SOFTMMU_TARGETS="arm" USE="static-user static-libs symlink" emerge -v sys-kernel/gentoo-sources app-emulation/qemu dev-util/ninja
+RUN QEMU_USER_TARGETS="arm" QEMU_SOFTMMU_TARGETS="arm" USE="static-user static-libs symlink" emerge ${MERGE_JOBS} --quiet sys-kernel/gentoo-sources app-emulation/qemu
 
 # create toolchain
 ENV TARGET=armv7a-unknown-linux-gnueabihf
-RUN crossdev --stable -t "${TARGET}"
-RUN crossdev --stable -t "${TARGET}" --ex-only --ex-gdb
+RUN crossdev --stable -t "${TARGET}" --portage "${MERGE_JOBS}"
+RUN crossdev --stable -t "${TARGET}" --ex-only --ex-gdb --portage "${MERGE_JOBS}"
 
 RUN emerge-wrapper --target "${TARGET}" --init
 
