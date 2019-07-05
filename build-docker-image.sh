@@ -57,6 +57,7 @@ for BUILD_CMD in "target-chroot locale-gen" \
                  "target-chroot emerge -1uDN --quiet $MERGE_JOBS sys-devel/gdb" \
                  "target-chroot emerge -uDN --quiet $MERGE_JOBS --keep-going @world; true" \
                  "target-chroot perl-cleaner --all -- --quiet $MERGE_JOBS" \
+                 "target-chroot for ebui in \$(equery l '*' \| cat)\; do test -e /usr/portage/packages/\${ebui}.tbz2 \|\| quickpkg --include-config=y \"=\"\$ebui\; done" \
                  ; do 
   echo "image '"${INTERMEDIATE_IMAGE}"' runs '"${BUILD_CMD}"'"
   BUILD_HASH=$(echo -n ${INTERMEDIATE_IMAGE}:${BUILD_CMD} | md5sum - | cut -c -32)

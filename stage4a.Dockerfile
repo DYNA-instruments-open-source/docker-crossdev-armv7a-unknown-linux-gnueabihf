@@ -26,7 +26,10 @@ RUN ln -s -f -T ../../usr/portage/profiles/default/linux/arm/17.0/armv7a /usr/${
               /usr/$TARGET/usr/lib/misc/ssh-keysign
 
 # install a default kernel and some tools
-RUN USE="symlink" ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET}/ sys-kernel/gentoo-sources app-portage/gentoolkit
+RUN USE="symlink" ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET}/ sys-kernel/gentoo-sources app-portage/gentoolkit \
+        sys-fs/f2fs-tools \
+        sys-fs/nilfs-utils \
+        sys-fs/mtd-utils
 
 # this will contain failures, gcc fails for sure
 # perl-cleaner -all will be run in stage4b in a privileged container
