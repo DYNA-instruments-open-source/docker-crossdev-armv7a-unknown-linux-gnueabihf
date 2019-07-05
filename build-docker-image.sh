@@ -14,7 +14,7 @@ DATETIME=$(date '+%Y%m%d%H%M%S')
 
 test -r $docker_dir/stage3.Dockerfile  || { echo "missing stage3.Dockerfile beside $0"; exit -1; }
 test -r $docker_dir/stage4a.Dockerfile || { echo "missing stage4a.Dockerfile beside $0"; exit -1; }
-test -r $docker_dir/Dockerfile || { echo "missing Dockerfile beside $0"; exit -1; }
+test -r $docker_dir/stage5.Dockerfile || { echo "missing stage5.Dockerfile beside $0"; exit -1; }
 
 echo "Refreshing base images"
 for base in $(sed -En 's#^[[:space:]]*FROM[[:space:]]+([^ \t]+)#\1#p' ${docker_dir}/stage3.Dockerfile | sed -E 's#\t# #g' | cut -d ' ' -f 1); do
