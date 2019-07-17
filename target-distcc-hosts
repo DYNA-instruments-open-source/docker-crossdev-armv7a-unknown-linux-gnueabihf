@@ -1,0 +1,12 @@
+# --- /etc/distcc/hosts -----------------------
+# See the "Hosts Specification" section of
+# "man distcc" for the format of this file.
+#
+# By default, just test that it works in loopback mode.
+distcc-worker-1/20
+distcc-worker-2/16 
+distcc-worker-3/12 
+
+# localhost/4
+--localslots=16
+--localslots_cpp=20

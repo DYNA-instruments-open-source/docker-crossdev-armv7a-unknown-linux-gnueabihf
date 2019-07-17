@@ -1,0 +1,37 @@
+#!/bin/bash
+#clang aware
+sleep 20
+cd /usr/lib/distcc/bin
+
+# We extract $TUPLE from make.conf to avoid editing the script for each architecture.
+TUPLE=$(portageq envvar CHOST)
+GCC_VER=$(gcc-config -c|cut -d "-" -f5)
+
+test -e clang && {
+  HAVE_CLANG=yes
+  CLANG_VER=$(clang --version|grep version|cut -d " " -f3|cut -d'.' -f1,2)
+}
+
+rm -f cc c99 c++ gcc g++ gcc-${GCC_VER} g++-${GCC_VER} clang clang++ clang-${CLANG_VER} clang++-${CLANG_VER} ${TUPLE}-wrapper ${TUPLE}-clang-wrapper 
+
+echo '#!/bin/bash' > ${TUPLE}-wrapper
+echo "exec ${TUPLE}-g\${0:\$[-2]}" "\"\$@\"" >> ${TUPLE}-wrapper
+chmod 755 ${TUPLE}-wrapper
+
+ln -s ${TUPLE}-wrapper cc
+ln -s ${TUPLE}-wrapper c99
+ln -s ${TUPLE}-wrapper c++
+ln -s ${TUPLE}-wrapper gcc
+ln -s ${TUPLE}-wrapper g++
+ln -s ${TUPLE}-wrapper gcc-${GCC_VER}
+ln -s ${TUPLE}-wrapper g++-${GCC_VER}
+
+if [ "${HAVE_CLANG}" ]; then
+    echo '#!/bin/bash' > ${TUPLE}-clang-wrapper
+    echo "exec ${TUPLE}-\$(basename \${0}) \"\$@\"" >> ${TUPLE}-clang-wrapper
+    chmod 755 ${TUPLE}-clang-wrapper
+    ln -s ${TUPLE}-clang-wrapper clang
+    ln -s ${TUPLE}-clang-wrapper clang++
+    ln -s ${TUPLE}-clang-wrapper clang-${CLANG_VER}
+    ln -s ${TUPLE}-clang-wrapper clang++-${CLANG_VER}
+fi

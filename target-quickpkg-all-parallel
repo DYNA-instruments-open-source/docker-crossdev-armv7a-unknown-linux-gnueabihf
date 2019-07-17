@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for e in $(equery l '*'); do 
+  test -e /usr/portage/packages/$e.tbz2 || quickpkg --include-config=y "="$e & 
+done
+
+wait
+
+eclean packages
+

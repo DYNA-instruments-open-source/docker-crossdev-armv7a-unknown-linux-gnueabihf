@@ -8,6 +8,10 @@ ARG MERGE_JOBS
 #  * https://wiki.gentoo.org/wiki/Embedded_Handbook
 #  * https://wiki.gentoo.org/wiki/Cross_build_environment
 
+RUN rm -rf /usr/${TARGET}/var/tmp/portage && mkdir -p /usr/${TARGET}/var/tmp/portage
+
+VOLUME /usr/${TARGET}/var/tmp/portage
+
 # prepare build utilities and the like
 COPY host-files-stage5/ /
 

@@ -1,0 +1,9 @@
+
+case ${CATEGORY}/${PN} in
+                 sys-devel/distcc | sys-devel/gcc | sys-devel/clang)
+			if [ "${EBUILD_PHASE}" == "postinst" ]; then
+				${ROOT}/usr/local/sbin/distcc-fix &
+			fi
+		;;
+esac
+

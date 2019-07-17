@@ -11,7 +11,7 @@ ARG MERGE_JOBS
 # prepare portage, cross-compler, static QEMU, etc.
 COPY host-files-stage3/ /
 
-RUN QEMU_USER_TARGETS="arm" QEMU_SOFTMMU_TARGETS="arm" USE="static-user static-libs symlink" emerge ${MERGE_JOBS} --quiet sys-kernel/gentoo-sources app-emulation/qemu
+RUN QEMU_USER_TARGETS="arm" QEMU_SOFTMMU_TARGETS="arm" USE="static-user static-libs symlink" emerge ${MERGE_JOBS} sys-kernel/gentoo-sources app-emulation/qemu
 
 # create toolchain
 ENV TARGET=armv7a-unknown-linux-gnueabihf

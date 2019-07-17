@@ -11,7 +11,6 @@ ARG MERGE_JOBS
 
 # set target make.conf, configure target-files
 COPY target-files-stage4-colibri-imx6ull/ /usr/${TARGET}/
-
 # set target make profile
 RUN ln -s -f -T ../../usr/portage/profiles/default/linux/arm/17.0/armv7a /usr/${TARGET}/etc/portage/make.profile && \
 	mkdir -p /usr/${TARGET}/usr/portage && \
@@ -26,7 +25,9 @@ RUN ln -s -f -T ../../usr/portage/profiles/default/linux/arm/17.0/armv7a /usr/${
               /usr/$TARGET/usr/lib/misc/ssh-keysign
 
 # install a default kernel and some tools
-RUN USE="symlink" ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET}/ sys-kernel/gentoo-sources app-portage/gentoolkit \
+RUN USE="symlink" ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET}/ \
+        sys-kernel/gentoo-sources \
+        app-portage/gentoolkit \
         sys-fs/f2fs-tools \
         sys-fs/nilfs-utils \
         sys-fs/mtd-utils
@@ -37,7 +38,14 @@ RUN ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET} -uv --keep-going \
 	--exclude "app-crypt/pinentry dev-python/pyblake2 dev-python/pyxattr sys-apps/util-linux sys-apps/portage sys-devel/gcc dev-libs/gmp sys-apps/groff sys-devel/binutils dev-libs/libpcre" \
 	@world || true
 
-RUN  chmod +x /usr/$TARGET/usr/local/bin/switch-toolchain; \
-     chmod -s /usr/$TARGET/bin/mount /usr/$TARGET/bin/umount
+COPY switch-toolchain /usr/$TARGET/usr/local/bin
+COPY target-distcc-fix1 /usr/${TARGET}/etc/portage/bashrc
+COPY target-distcc-fix2 /usr/${TARGET}/usr/local/sbin/distcc-fix
+COPY target-quickpkg-all-parallel /usr/${TARGET}/usr/local/sbin/quickpkg-all-parallel
+COPY target-distcc-hosts /usr/${TARGET}/etc/distcc/hosts
+
+RUN  chmod +x /usr/${TARGET}/usr/local/bin/switch-toolchain && \
+     chmod +x /usr/${TARGET}/usr/local/sbin/* && \
+     chmod -s /usr/${TARGET}/bin/mount /usr/$TARGET/bin/umount
 
 CMD /bin/bash -il
