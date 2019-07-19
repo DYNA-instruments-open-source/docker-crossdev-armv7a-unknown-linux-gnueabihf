@@ -37,7 +37,7 @@ RUN cd /var/tmp \
 
 COPY target-chroot /usr/local/bin/
 RUN cp -l /usr/local/bin/target-chroot /usr/local/bin/${TARGET}-chroot && \
-    cp -l /usr/local/bin/target-xkmake /usr/local/bin/${TARGET}-xkmake && \
-    chmod +x /usr/local/bin/*-chroot /usr/local/bin/*-xkmake
+    chmod +x /usr/local/bin/*-chroot
+
 CMD /bin/bash -il
 

@@ -15,6 +15,8 @@ VOLUME /usr/${TARGET}/var/tmp/portage
 
 # prepare build utilities and the like
 COPY host-files-stage5/ /
+RUN cp -l /usr/local/bin/target-xkmake /usr/local/bin/${TARGET}-xkmake && \
+    chmod +x /usr/local/bin/*-xkmake
 
 # prepare chroot target utilities
 COPY target-utilities-stage5/ /usr/${TARGET}/
