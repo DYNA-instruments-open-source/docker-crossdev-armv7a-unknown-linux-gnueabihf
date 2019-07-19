@@ -8,7 +8,8 @@ ARG MERGE_JOBS
 #  * https://wiki.gentoo.org/wiki/Embedded_Handbook
 #  * https://wiki.gentoo.org/wiki/Cross_build_environment
 
-RUN rm -rf /usr/${TARGET}/var/tmp/portage && mkdir -p /usr/${TARGET}/var/tmp/portage
+RUN echo YES | etc-update --automode -9; \
+    rm -rf /usr/${TARGET}/var/tmp/portage && mkdir -p /usr/${TARGET}/var/tmp/portage
 
 VOLUME /usr/${TARGET}/var/tmp/portage
 

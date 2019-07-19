@@ -34,7 +34,8 @@ RUN USE="symlink" ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET}/ \
 
 # this will contain failures, gcc fails for sure
 # perl-cleaner -all will be run in stage4b in a privileged container
-RUN ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET} -uv --keep-going \
+RUN  chmod ug-s /usr/${TARGET}/bin/{passwd,su} /usr/${TARGET}/usr/bin/{expiry,newgidmap,newuidmap,chsh,chfn,newgrp,gpasswd,chage}; \
+     ${TARGET}-emerge ${MERGE_JOBS} --root=/usr/${TARGET} -uv --keep-going \
 	--exclude "app-crypt/pinentry dev-python/pyblake2 dev-python/pyxattr sys-apps/util-linux sys-apps/portage sys-devel/gcc dev-libs/gmp sys-apps/groff sys-devel/binutils dev-libs/libpcre" \
 	@world || true
 

@@ -36,7 +36,8 @@ RUN cd /var/tmp \
 	&& cp /usr/bin/qemu-arm /usr/${TARGET}/usr/bin
 
 COPY target-chroot /usr/local/bin/
-RUN cp /usr/local/bin/target-chroot /usr/local/bin/${TARGET}-chroot && \
-        chmod +x /usr/local/bin/target-chroot /usr/local/bin/${TARGET}-chroot
+RUN cp -l /usr/local/bin/target-chroot /usr/local/bin/${TARGET}-chroot && \
+    cp -l /usr/local/bin/target-xkmake /usr/local/bin/${TARGET}-xkmake && \
+    chmod +x /usr/local/bin/*-chroot /usr/local/bin/*-xkmake
 CMD /bin/bash -il
 

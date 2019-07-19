@@ -1,2 +1,2 @@
 #!/bin/bash
-exec make ARCH="arm" CROSS_COMPILE="arm-unknown-linux-gnu-" INSTALL_MOD_PATH="${SYSROOT}" "$@"
+exec make ARCH="arm" CROSS_COMPILE="${TARGET}-" INSTALL_MOD_PATH="${SYSROOT}" "$@"
