@@ -5,7 +5,7 @@ docker_dir=$(dirname $(readlink -f $0))
 : "${MERGE_JOBS:="--jobs=16"}"
 : "${REPO:=dynainstrumentsoss}"
 : "${IMAGE:=$(basename $docker_dir)}"
-: "${TAG:=2019.06}"
+: "${TAG:=2019.11}"
 STAGE3_TAG=${REPO}/${IMAGE}-stage3:${TAG}
 STAGE4a_TAG=${REPO}/${IMAGE}-stage-pre4-a:${TAG}
 STAGE4b_TAG=${REPO}/${IMAGE}-stage-pre4-b:${TAG}
@@ -45,12 +45,12 @@ for BUILD_CMD in "target-chroot locale-gen" \
                  "target-chroot emerge -1u $MERGE_JOBS sys-devel/distcc \; sleep 2m" \
                  "target-chroot emerge -1u $MERGE_JOBS sys-devel/binutils${BINUTILS_SLOT:+:$BINUTILS_SLOT}" \
                  "target-chroot BINUTILS_SLOT=$BINUTILS_SLOT switch-toolchain" \
-                 "target-chroot emerge -1uDN $MERGE_JOBS --autounmask-backtrack=y --keep-going sys-kernel/linux-headers${KERNELHEADERS_VERSION:+-$KERNELHEADERS_VERSION}" \
+                 "target-chroot emerge -1uDN $MERGE_JOBS --autounmask-backtrack=y --keep-going sys-kernel/linux-headers${KERNELHEADERS_VERSION:+-$KERNELHEADERS_VERSION}\; echo YES \| etc-update --automode -9" \
                  "target-chroot emerge -1u $MERGE_JOBS sys-libs/glibc${GLIBC_VERSION:+-$GLIBC_VERSION}" \
                  "target-chroot emerge -1u $MERGE_JOBS sys-devel/gcc${GCC_SLOT:+:$GCC_SLOT} \; sleep 2m" \
                  "target-chroot BINUTILS_SLOT=$BINUTILS_SLOT GCC_SLOT=$GCC_SLOT switch-toolchain" \
                  "target-chroot emerge -1u $MERGE_JOBS sys-devel/gdb" \
-                 "target-chroot emerge -uDN $MERGE_JOBS --autounmask-backtrack=y --keep-going @world\; true" \
+                 "target-chroot emerge -uDN $MERGE_JOBS --autounmask-backtrack=y --keep-going @world\; echo YES \| etc-update --automode -9\; true" \
                  "target-chroot perl-cleaner --all -- $MERGE_JOBS" \
                  "target-chroot /usr/local/sbin/distcc-fix" \
                  "target-chroot quickpkg-all-parallel" \
