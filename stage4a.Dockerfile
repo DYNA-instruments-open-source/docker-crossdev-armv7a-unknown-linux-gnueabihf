@@ -12,9 +12,9 @@ ARG MERGE_JOBS
 # set target make.conf, configure target-files
 COPY target-files-stage4-colibri-imx6ull/ /usr/${TARGET}/
 # set target make profile
-RUN ln -s -f -T ../../var/db/repos/profiles/default/linux/arm/17.0/armv7a /usr/${TARGET}/etc/portage/make.profile && \
-	mkdir -p /usr/${TARGET}/var/db/repos && \
-	ln -s -f -T ../../../../var/db/repos/profiles /usr/${TARGET}/var/db/repos/profiles && \
+RUN ln -s -f -T ../../var/db/repos/gentoo/profiles/default/linux/arm/17.0/armv7a /usr/${TARGET}/etc/portage/make.profile && \
+	mkdir -p /usr/${TARGET}/var/db/repos/gentoo && \
+	ln -s -f -T ../../../../../../var/db/repos/gentoo/profiles /usr/${TARGET}/var/db/repos/gentoo/profiles && \
 # add symlink to lib64, see https://wiki.gentoo.org/wiki/Cross_build_environment#Known_bugs_and_limitations
 	ln -s -f -T lib /usr/${TARGET}/usr/lib64 && \
 	ln -s -f -T /tmp /usr/${TARGET}/usr/${TARGET}/tmp && \

@@ -1,1 +1,2 @@
 sys-libs/glibc no-sandbox.conf
+sys-libs/ncurses no-sandbox.conf

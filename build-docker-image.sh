@@ -74,5 +74,5 @@ done
 
 docker tag ${INTERMEDIATE_IMAGE} ${STAGE4b_TAG} || exit $?
 
-# build stage 4 final
-docker build -f stage5.Dockerfile --build-arg STAGE4b_TAG=${STAGE4b_TAG} --build-arg "MERGE_JOBS=${MERGE_JOBS}" --build-arg http_proxy=$http_proxy --build-arg https_proxy=${https_proxy:-$http_proxy} --tag ${FULL_TAG} $docker_dir 2>&1 | tee ${docker_dir}/log/docker-build-stage4-final.${DATETIME}.log
+# build stage 5 final
+docker build -f stage5.Dockerfile --build-arg STAGE4b_TAG=${STAGE4b_TAG} --build-arg "MERGE_JOBS=${MERGE_JOBS}" --build-arg http_proxy=$http_proxy --build-arg https_proxy=${https_proxy:-$http_proxy} --tag ${FULL_TAG} $docker_dir 2>&1 | tee ${docker_dir}/log/docker-build-stage5.${DATETIME}.log
