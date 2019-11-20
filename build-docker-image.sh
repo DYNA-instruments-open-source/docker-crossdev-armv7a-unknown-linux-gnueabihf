@@ -53,6 +53,7 @@ for BUILD_CMD in "target-chroot locale-gen" \
                  "target-chroot emerge -uDN $MERGE_JOBS --autounmask-backtrack=y --keep-going @world\; echo YES \| etc-update --automode -9\; true" \
                  "target-chroot perl-cleaner --all -- $MERGE_JOBS" \
                  "target-chroot /usr/local/sbin/distcc-fix" \
+                 "target-chroot emerge --depclean sys-devel/binutils sys-devel/gcc sys-libs/glibc" \
                  "target-chroot quickpkg-all-parallel" \
                  ; do 
   BUILD_HASH=$(echo -n ${INTERMEDIATE_IMAGE}:${BUILD_CMD} | md5sum - | cut -c -32)

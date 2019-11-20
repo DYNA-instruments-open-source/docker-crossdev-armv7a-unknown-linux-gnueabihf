@@ -10,6 +10,7 @@ grep -q ${CHROOT_DIR}/proc /proc/mounts || { mount -t proc proc ${CHROOT_DIR}/pr
 grep -q ${CHROOT_DIR}/sys /proc/mounts || { mount --rbind /sys ${CHROOT_DIR}/sys && mount --make-rslave ${CHROOT_DIR}/sys && DO_UMOUNT="${CHROOT_DIR}/sys $DO_UMOUNT"; }
 grep -q ${CHROOT_DIR}/dev /proc/mounts || { mount --rbind /dev ${CHROOT_DIR}/dev && mount --make-rslave ${CHROOT_DIR}/dev && DO_UMOUNT="${CHROOT_DIR}/dev $DO_UMOUNT"; }
 grep -q ${CHROOT_DIR}/var/db/repos /proc/mounts || { mkdir -p ${CHROOT_DIR}/var/db/repos && mount --rbind /var/db/repos ${CHROOT_DIR}/var/db/repos && DO_UMOUNT="${CHROOT_DIR}/var/db/repos $DO_UMOUNT"; }
+grep -q ${CHROOT_DIR}/var/cache/binpkgs /proc/mounts || { mkdir -p ${CHROOT_DIR}/var/cache/binpkgs && mount --rbind /var/cache/binpkgs ${CHROOT_DIR}/var/cache/binpkgs && DO_UMOUNT="${CHROOT_DIR}/var/cache/binpkgs $DO_UMOUNT"; }
 rsync -Lc /etc/resolv.conf ${CHROOT_DIR}/etc/resolv.conf
 
 export QEMU_CPU=${QEMU_CPU:-cortex-a7}
@@ -17,7 +18,6 @@ unset QEMU_LD_PREFIX
 chroot ${CHROOT_DIR}/ /bin/bash --login ${*:+-c} "${*:--i}"
 RESULT=$?
 
-#umount -R ${CHROOT_DIR}/{dev,sys,proc,var/db/repos}
 #echo $DO_UMOUNT
 for fs in $DO_UMOUNT; do 
   umount -R $fs
