@@ -7,8 +7,8 @@ docker_dir=$(dirname $(readlink -f $0))
 : "${IMAGE:=$(basename $docker_dir)}"
 : "${TAG:=2019.11}"
 STAGE3_TAG=${REPO}/${IMAGE}-stage3:${TAG}
-STAGE4a_TAG=${REPO}/${IMAGE}-stage-pre4-a:${TAG}
-STAGE4b_TAG=${REPO}/${IMAGE}-stage-pre4-b:${TAG}
+STAGE4a_TAG=${REPO}/${IMAGE}-stage4-a:${TAG}
+STAGE4b_TAG=${REPO}/${IMAGE}-stage4-b:${TAG}
 FULL_TAG=${REPO}/${IMAGE}-stage5:${TAG}
 DATETIME=$(date '+%Y%m%d%H%M%S')
 
