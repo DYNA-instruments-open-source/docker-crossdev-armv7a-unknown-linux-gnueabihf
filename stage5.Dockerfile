@@ -19,6 +19,6 @@ RUN cp -l /usr/local/bin/target-xkmake /usr/local/bin/${TARGET}-xkmake && \
     chmod +x /usr/local/bin/*-xkmake
 
 # prepare chroot target utilities
-COPY target-utilities-stage5/ /usr/${TARGET}/
+COPY target-files-stage5/ /usr/${TARGET}/
 
 CMD /bin/bash -il
