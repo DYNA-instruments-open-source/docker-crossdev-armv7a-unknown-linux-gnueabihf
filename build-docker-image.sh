@@ -59,10 +59,10 @@ for BUILD_CMD in "target-chroot locale-gen" \
   BUILD_HASH=$(echo -n ${INTERMEDIATE_IMAGE}:${BUILD_CMD} | md5sum - | cut -c -32)
   echo "${INTERMEDIATE_IMAGE}:${BUILD_CMD}" >${docker_dir}/stage4b-cache/${BUILD_HASH}.txt
   if [ -e ${docker_dir}/stage4b-cache/${BUILD_HASH} ]; then
-    echo "image '"${INTERMEDIATE_IMAGE}"' takes '"${BUILD_CMD}"' from cache"
+    echo "image '"${INTERMEDIATE_IMAGE}"' takes '"${BUILD_CMD}"' from cache" 2>&1 | tee -a ${docker_dir}/log/docker-build-stage4b.${DATETIME}.log
     INTERMEDIATE_IMAGE=$(cat ${docker_dir}/stage4b-cache/${BUILD_HASH})
   else
-    echo "image '"${INTERMEDIATE_IMAGE}"' runs '"${BUILD_CMD}"'"
+    echo "image '"${INTERMEDIATE_IMAGE}"' runs '"${BUILD_CMD}"'" 2>&1 | tee -a ${docker_dir}/log/docker-build-stage4b.${DATETIME}.log
     INTERMEDIATE_CONTAINER=$(docker run --detach --privileged -e http_proxy=${http_proxy} -e https_proxy=${https_proxy:-$http_proxy} ${INTERMEDIATE_IMAGE} /bin/bash -l -c "${BUILD_CMD}") || exit $?
     docker logs --follow $INTERMEDIATE_CONTAINER 2>&1 | tee -a ${docker_dir}/log/docker-build-stage4b.${DATETIME}.log || { docker stop $INTERMEDIATE_CONTAINER; exit $(docker wait $INTERMEDIATE_CONTAINER); }
     INTERMEDIATE_RESULT=$(docker wait $INTERMEDIATE_CONTAINER)
